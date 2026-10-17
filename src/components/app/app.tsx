@@ -14,10 +14,19 @@ import {
 import { Modal } from '@components';
 import { ProtectedRoute } from '../protected-route/protected-route';
 import { AppHeader } from '../app-header/app-header';
+import { fetchUser } from '@/services/slices/user/slice';
+import { useDispatch } from '../../services/store';
+import { fetchIngredients } from '../../services/slices/ingredients/slice';
 
 const App = (): React.JSX.Element => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchIngredients());
+    dispatch(fetchUser()); // проверка автоматизации при загрузке
+  }, [dispatch]);
 
   // ссылки на ингредиенты и заказы будут передавать этот background.
   const background = location.state?.background;
