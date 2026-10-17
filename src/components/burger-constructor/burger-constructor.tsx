@@ -1,14 +1,25 @@
 import { BurgerConstructorUI } from '@ui';
 import { useMemo } from 'react';
+import { useSelector } from '../../services/store';
+import {
+  selectConstructorBun,
+  selectConstructorIngredients
+} from '../../services/selectors';
 
 import type { TConstructorIngredient, TConstructorState, TOrder } from '@utils-types';
 
 export const BurgerConstructor = (): React.JSX.Element | null => {
-  /** TODO: Взять переменные constructorItems, orderRequest и orderModalData из стора */
+  // берем из стора
+  const bun = useSelector(selectConstructorBun);
+  const ingredients = useSelector(selectConstructorIngredients);
+
+  // формируем объект для UI, подставляя данные из стора
   const constructorItems: TConstructorState = {
-    bun: null,
-    ingredients: [],
+    bun,
+    ingredients,
   };
+
+  // пока оставляем заглушки для заказа
   const orderRequest = false;
   const orderModalData: TOrder | null = null;
 
@@ -21,6 +32,7 @@ export const BurgerConstructor = (): React.JSX.Element | null => {
     // TODO: Закрыть модальное окно и сбросить заказ
   };
 
+  // считаем цену
   const price = useMemo(
     () =>
       (constructorItems.bun ? constructorItems.bun.price * 2 : 0) +
