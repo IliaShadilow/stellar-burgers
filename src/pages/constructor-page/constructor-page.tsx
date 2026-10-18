@@ -1,9 +1,11 @@
 import { BurgerIngredients, BurgerConstructor } from '@components';
-import { useEffect } from 'react';
 import { Preloader } from '@ui';
-import { useDispatch, useSelector } from '../../services/store';
-import { fetchIngredients } from '../../services/slices/ingredients/slice';
+import { useEffect } from 'react';
+
 import { selectIngredientsLoading } from '../../services/selectors';
+import { fetchIngredients } from '../../services/slices/ingredients/slice';
+import { useDispatch, useSelector } from '../../services/store';
+
 import styles from './constructor-page.module.css';
 
 export const ConstructorPage = (): React.JSX.Element => {
@@ -11,7 +13,7 @@ export const ConstructorPage = (): React.JSX.Element => {
   const isIngredientsLoading = useSelector(selectIngredientsLoading);
 
   useEffect(() => {
-    dispatch(fetchIngredients());
+    void dispatch(fetchIngredients());
   }, [dispatch]);
 
   return (

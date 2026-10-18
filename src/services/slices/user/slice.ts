@@ -1,6 +1,16 @@
+import {
+  loginUserApi,
+  getUserApi,
+  logoutApi,
+  registerUserApi,
+  updateUserApi,
+  type TLoginData,
+  type TRegisterData,
+} from '@api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { loginUserApi, getUserApi, logoutApi, registerUserApi, updateUserApi, type TLoginData, type TRegisterData } from '@api';
+
 import { setCookie, deleteCookie } from '@utils/cookie';
+
 import type { TUser } from '@utils-types';
 
 type TUserState = {
@@ -110,7 +120,7 @@ const userSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-       .addCase(logoutUser.fulfilled, (state) => {
+      .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
       });
   },

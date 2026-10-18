@@ -1,4 +1,5 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
+
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { TConstructorIngredient, TIngredient } from '@utils-types';
 
@@ -10,7 +11,7 @@ type TConstructorState = {
 // заменили на чтение из localStorage, чтобы при обновлении стр у пользователя сохранялись нервы
 const savedState = localStorage.getItem('burgerConstructor');
 const initialState: TConstructorState = savedState
-  ? JSON.parse(savedState)
+  ? (JSON.parse(savedState) as TConstructorState) // добавили as TConstructorState
   : { bun: null, ingredients: [] };
 
 const constructorSlice = createSlice({

@@ -8,7 +8,9 @@ export const OrdersList = memo(function OrdersList({
 }: OrdersListProps): React.JSX.Element {
   // добавили проверку на undefined, чтобы приложение не падало
   const orderByDate = orders
-    ? [...orders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    ? [...orders].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
     : [];
 
   return <OrdersListUI orderByDate={orderByDate} />;

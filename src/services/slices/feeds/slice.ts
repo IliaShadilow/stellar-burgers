@@ -1,7 +1,8 @@
 // слайс ленты
 
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getFeedsApi, getOrdersApi } from '@api';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import type { TOrder } from '@utils-types';
 
 type TFeedsState = {

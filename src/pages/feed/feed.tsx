@@ -1,9 +1,10 @@
 import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from '../../services/store';
-import { fetchFeeds } from '../../services/slices/feeds/slice';
+
 import { selectFeeds } from '../../services/selectors';
+import { fetchFeeds } from '../../services/slices/feeds/slice';
+import { useDispatch, useSelector } from '../../services/store';
 
 export const Feed = (): React.JSX.Element => {
   // берем переменную из стора
@@ -12,11 +13,11 @@ export const Feed = (): React.JSX.Element => {
 
   const handleGetFeeds = (): void => {
     // запрос ленту заказов
-    dispatch(fetchFeeds());
+    void dispatch(fetchFeeds());
   };
 
   useEffect(() => {
-    dispatch(fetchFeeds());
+    void dispatch(fetchFeeds());
   }, [dispatch]);
 
   if (!orders.length) {

@@ -1,8 +1,10 @@
 import { ProfileUI } from '@ui-pages';
 import { type SyntheticEvent, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from '../../services/store';
+
 import { selectUser, selectUserError } from '../../services/selectors';
 import { updateUser } from '../../services/slices/user/slice';
+import { useDispatch, useSelector } from '../../services/store';
+
 import type { TRegisterData } from '@api';
 
 export const Profile = (): React.JSX.Element => {
@@ -21,16 +23,16 @@ export const Profile = (): React.JSX.Element => {
   useEffect(() => {
     if (user) {
       setFormValue({
-        name: user.name || '',
-        email: user.email || '',
+        name: user.name ?? '',
+        email: user.email ?? '',
         password: '',
       });
     }
   }, [user]); // зависимость строго [user]
 
   const isFormChanged =
-    formValue.name !== (user?.name || '') ||
-    formValue.email !== (user?.email || '') ||
+    formValue.name !== (user?.name ?? '') ||
+    formValue.email !== (user?.email ?? '') ||
     !!formValue.password;
 
   const handleSubmit = (e: SyntheticEvent): void => {
@@ -39,14 +41,14 @@ export const Profile = (): React.JSX.Element => {
     if (formValue.name !== user?.name) payload.name = formValue.name;
     if (formValue.email !== user?.email) payload.email = formValue.email;
     if (formValue.password) payload.password = formValue.password;
-    dispatch(updateUser(payload));
+    void dispatch(updateUser(payload));
   };
 
   const handleCancel = (e: SyntheticEvent): void => {
     e.preventDefault();
     setFormValue({
-      name: user?.name || '',
-      email: user?.email || '',
+      name: user?.name ?? '',
+      email: user?.email ?? '',
       password: '',
     });
   };
@@ -62,7 +64,7 @@ export const Profile = (): React.JSX.Element => {
     <ProfileUI
       formValue={formValue}
       isFormChanged={isFormChanged}
-      updateUserError={updateUserError || undefined}
+      updateUserError={updateUserError ?? undefined}
       handleCancel={handleCancel}
       handleSubmit={handleSubmit}
       handleInputChange={handleInputChange}

@@ -2,9 +2,9 @@ import { BurgerIngredientsUI } from '@ui';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
+import { selectIngredients } from '../../services/selectors';
 // импорт хука и селектора
 import { useSelector } from '../../services/store';
-import { selectIngredients } from '../../services/selectors';
 
 import type { TIngredient, TTabMode } from '@utils-types';
 

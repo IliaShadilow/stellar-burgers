@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Modal, IngredientDetails, OrderInfo } from '@components';
 import {
   ConstructorPage,
   Feed,
@@ -11,12 +10,14 @@ import {
   ProfileOrders,
   NotFound404,
 } from '@pages';
-import { Modal } from '@components';
-import { ProtectedRoute } from '../protected-route/protected-route';
-import { AppHeader } from '../app-header/app-header';
-import { fetchUser } from '@/services/slices/user/slice';
-import { useDispatch } from '../../services/store';
+import { useEffect } from 'react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+
 import { fetchIngredients } from '../../services/slices/ingredients/slice';
+import { fetchUser } from '../../services/slices/user/slice';
+import { useDispatch } from '../../services/store';
+import { AppHeader } from '../app-header/app-header';
+import { ProtectedRoute } from '../protected-route/protected-route';
 
 const App = (): React.JSX.Element => {
   const location = useLocation();
@@ -24,19 +25,19 @@ const App = (): React.JSX.Element => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchIngredients());
-    dispatch(fetchUser()); // проверка автоматизации при загрузке
+    void dispatch(fetchIngredients());
+    void dispatch(fetchUser()); // проверка авторизации при загрузке
   }, [dispatch]);
 
   // ссылки на ингредиенты и заказы будут передавать этот background.
-  const background = location.state?.background;
+  const background = (location.state as { background?: Location })?.background ?? null;
 
   return (
     <div>
       <AppHeader />
 
       {/* основные маршруты */}
-      <Routes location={background || location}>
+      <Routes location={background ?? location}>
         <Route path="/" element={<ConstructorPage />} />
         <Route path="/feed" element={<Feed />} />
 
@@ -93,13 +94,13 @@ const App = (): React.JSX.Element => {
         />
 
         {/* прямые переходы на детали (если открыть ссылку в новой вкладке) */}
-        <Route path="/ingredients/:id" element={<div>IngredientDetails (страница)</div>} />
-        <Route path="/feed/:number" element={<div>OrderInfo (страница)</div>} />
+        <Route path="/ingredients/:id" element={<IngredientDetails />} />
+        <Route path="/feed/:number" element={<OrderInfo />} />
         <Route
           path="/profile/orders/:number"
           element={
             <ProtectedRoute>
-              <div>OrderInfo (страница)</div>
+              <OrderInfo />
             </ProtectedRoute>
           }
         />
@@ -113,16 +114,26 @@ const App = (): React.JSX.Element => {
           <Route
             path="/ingredients/:id"
             element={
-              <Modal title="Детали ингредиента" onClose={() => navigate(-1)}>
-                <div>IngredientDetails (модалка)</div>
+              <Modal
+                title="Детали ингредиента"
+                onClose={(): void => {
+                  void navigate(-1);
+                }}
+              >
+                <IngredientDetails />
               </Modal>
             }
           />
           <Route
             path="/feed/:number"
             element={
-              <Modal title="Информация о заказе" onClose={() => navigate(-1)}>
-                <div>OrderInfo (модалка)</div>
+              <Modal
+                title="Информация о заказе"
+                onClose={(): void => {
+                  void navigate(-1);
+                }}
+              >
+                <OrderInfo />
               </Modal>
             }
           />
@@ -130,8 +141,13 @@ const App = (): React.JSX.Element => {
             path="/profile/orders/:number"
             element={
               <ProtectedRoute>
-                <Modal title="Информация о заказе" onClose={() => navigate(-1)}>
-                  <div>OrderInfo (модалка)</div>
+                <Modal
+                  title="Информация о заказе"
+                  onClose={(): void => {
+                    void navigate(-1);
+                  }}
+                >
+                  <OrderInfo />
                 </Modal>
               </ProtectedRoute>
             }

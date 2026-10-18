@@ -1,7 +1,8 @@
-import { Navigate, useLocation } from 'react-router-dom';
 import { Preloader } from '@ui';
-import { useSelector } from '../../services/store';
+import { Navigate, useLocation } from 'react-router-dom';
+
 import { selectIsAuthChecked, selectUser } from '../../services/selectors';
+import { useSelector } from '../../services/store';
 
 type TProtectedRouteProps = {
   onlyUnAuth?: boolean;
@@ -12,7 +13,7 @@ type TProtectedRouteProps = {
 
 export const ProtectedRoute = ({
   onlyUnAuth = false,
-  children
+  children,
 }: TProtectedRouteProps): React.JSX.Element => {
   const user = useSelector(selectUser);
   const isAuthChecked = useSelector(selectIsAuthChecked);
@@ -23,7 +24,7 @@ export const ProtectedRoute = ({
   }
 
   if (onlyUnAuth && user) {
-    const from = location.state?.from || { pathname: '/' };
+    const from = (location.state as { from?: Location })?.from ?? { pathname: '/' };
     return <Navigate to={from} replace />;
   }
 
