@@ -1,26 +1,24 @@
 import { FeedInfoUI } from '@ui';
-
-import type { TOrder } from '@utils-types';
-
-const getOrders = (orders: TOrder[], status: string): number[] =>
-  orders
-    .filter((item) => item.status === status)
-    .map((item) => item.number)
-    .slice(0, 20);
+import { useSelector } from '../../services/store';
+import { selectFeeds, selectFeedsTotal, selectFeedsTotalToday } from '../../services/selectors';
 
 export const FeedInfo = (): React.JSX.Element => {
+  const orders = useSelector(selectFeeds);
+  const total = useSelector(selectFeedsTotal);
+  const totalToday = useSelector(selectFeedsTotalToday);
+
+  // собираем объект feed, который ждет UI
   const feed = {
-    orders: [],
-    total: 0,
-    totalToday: 0,
+    orders,
+    total,
+    totalToday,
     isLoading: false,
     error: null,
   };
-  const orders: TOrder[] = [];
 
-  const readyOrders = getOrders(orders, 'done');
-
-  const pendingOrders = getOrders(orders, 'pending');
+  // берем номера заказов для колонок Готовы и В работе
+  const readyOrders = orders.filter((o) => o.status === 'done').map((o) => o.number).slice(0, 10);
+  const pendingOrders = orders.filter((o) => o.status === 'pending' || o.status === 'created').map((o) => o.number).slice(0, 10);
 
   return (
     <FeedInfoUI readyOrders={readyOrders} pendingOrders={pendingOrders} feed={feed} />

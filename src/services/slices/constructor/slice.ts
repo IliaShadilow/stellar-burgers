@@ -7,10 +7,11 @@ type TConstructorState = {
   ingredients: TConstructorIngredient[];
 };
 
-const initialState: TConstructorState = {
-  bun: null,
-  ingredients: [],
-};
+// заменили на чтение из localStorage, чтобы при обновлении стр у пользователя сохранялись нервы
+const savedState = localStorage.getItem('burgerConstructor');
+const initialState: TConstructorState = savedState
+  ? JSON.parse(savedState)
+  : { bun: null, ingredients: [] };
 
 const constructorSlice = createSlice({
   name: 'burgerConstructor', // не используем 'constructor', потому что нельзя
@@ -51,6 +52,7 @@ const constructorSlice = createSlice({
     clearConstructor: (state) => {
       state.bun = null;
       state.ingredients = [];
+      localStorage.removeItem('burgerConstructor'); // после очиски корзины очищаем localStorage
     },
   },
 });

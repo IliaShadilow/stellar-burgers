@@ -1,5 +1,5 @@
 import { BurgerConstructorUI } from '@ui';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from '../../services/store';
 import {
   selectConstructorBun,
@@ -30,6 +30,10 @@ export const BurgerConstructor = (): React.JSX.Element | null => {
     bun,
     ingredients,
   };
+
+  useEffect(() => {
+    localStorage.setItem('burgerConstructor', JSON.stringify({ bun, ingredients }));
+  }, [bun, ingredients]);
 
   const onOrderClick = (): void => {
     if (!bun || orderRequest) return;

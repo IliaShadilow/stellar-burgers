@@ -8,6 +8,7 @@
 
 .elements {
   min-height: 100px;
+  max-height: 464px; 
   margin: 0;
   padding: 0;
   overflow-y: scroll;

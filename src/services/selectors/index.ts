@@ -15,3 +15,8 @@ export const selectUserError = (state: RootState) => state.user.error;
 
 export const selectOrderData = (state: RootState) => state.order.orderData;
 export const selectOrderLoading = (state: RootState) => state.order.isLoading;
+
+export const selectFeeds = (state: RootState) => state.feeds.orders;
+export const selectFeedsTotal = (state: RootState) => state.feeds.total;
+export const selectFeedsTotalToday = (state: RootState) => state.feeds.totalToday;
+export const selectUserOrders = (state: RootState) => state.feeds.userOrders;
