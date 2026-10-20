@@ -3,32 +3,25 @@ import { useMemo, useState, useRef, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { selectIngredients } from '../../services/selectors';
-// импорт хука и селектора
 import { useSelector } from '../../services/store';
 
 import type { TIngredient, TTabMode } from '@utils-types';
 
 export const BurgerIngredients = (): React.JSX.Element => {
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
+
   const titleBunRef = useRef<HTMLHeadingElement>(null);
   const titleMainRef = useRef<HTMLHeadingElement>(null);
   const titleSaucesRef = useRef<HTMLHeadingElement>(null);
 
-  // берем данные из Redux, а не пустой массив
+  // берем только ингредиенты из стора
   const ingredients = useSelector(selectIngredients);
 
-  const [bunsRef, inViewBuns] = useInView({
-    threshold: 0,
-  });
+  const [bunsRef, inViewBuns] = useInView({ threshold: 0 });
+  const [mainsRef, inViewFilling] = useInView({ threshold: 0 });
+  const [saucesRef, inViewSauces] = useInView({ threshold: 0 });
 
-  const [mainsRef, inViewFilling] = useInView({
-    threshold: 0,
-  });
-
-  const [saucesRef, inViewSauces] = useInView({
-    threshold: 0,
-  });
-
+  // он нужен useEffect: он переключает таб при скролле
   useEffect(() => {
     if (inViewBuns) {
       setCurrentTab('bun');
@@ -39,6 +32,7 @@ export const BurgerIngredients = (): React.JSX.Element => {
     }
   }, [inViewBuns, inViewFilling, inViewSauces]);
 
+  // он скроллит к нужной секции при клике на таб
   const onTabClick = (tab: string): void => {
     setCurrentTab(tab as TTabMode);
     if (tab === 'bun') titleBunRef.current?.scrollIntoView({ behavior: 'smooth' });

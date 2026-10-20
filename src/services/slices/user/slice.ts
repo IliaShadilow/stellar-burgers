@@ -56,7 +56,7 @@ export const fetchUser = createAsyncThunk<TUser>('user/fetchUser', async () => {
 export const logoutUser = createAsyncThunk('user/logout', async () => {
   await logoutApi();
   deleteCookie('accessToken');
-  localStorage.removeItem('refreshToken');
+  localStorage.clear(); // очищаем абсолютно все
 });
 
 // Thunk для обновления данных пользователя

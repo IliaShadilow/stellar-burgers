@@ -9,26 +9,25 @@ import type { TRegisterData } from '@api';
 
 export const Profile = (): React.JSX.Element => {
   const dispatch = useDispatch();
-  // берем пользователя из стора
   const user = useSelector(selectUser);
   const updateUserError = useSelector(selectUserError);
 
   const [formValue, setFormValue] = useState({
-    name: '',
-    email: '',
+    name: user?.name ?? '',
+    email: user?.email ?? '',
     password: '',
   });
 
-  // синхронизируем форму с юзером ТОЛЬКО когда меняется сам юзер
+  // используем useEffect, он нужен, чтобы обновлять форму после сохранения
   useEffect(() => {
     if (user) {
       setFormValue({
         name: user.name ?? '',
         email: user.email ?? '',
-        password: '',
+        password: '', // пароль всегда сбрасываем
       });
     }
-  }, [user]); // зависимость строго [user]
+  }, [user]); // срабатывает при изменении user в Redux
 
   const isFormChanged =
     formValue.name !== (user?.name ?? '') ||
@@ -38,9 +37,11 @@ export const Profile = (): React.JSX.Element => {
   const handleSubmit = (e: SyntheticEvent): void => {
     e.preventDefault();
     const payload: Partial<TRegisterData> = {};
+    // отправляем только то, что изменилось
     if (formValue.name !== user?.name) payload.name = formValue.name;
     if (formValue.email !== user?.email) payload.email = formValue.email;
     if (formValue.password) payload.password = formValue.password;
+
     void dispatch(updateUser(payload));
   };
 
