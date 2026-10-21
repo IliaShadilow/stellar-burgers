@@ -64,7 +64,7 @@ export const updateUser = createAsyncThunk<TUser, Partial<TRegisterData>>(
   'user/updateUser',
   async (data) => {
     const res = await updateUserApi(data);
-    return res.user;
+    return res.user; // thunk снимает обёртку { success, user },
   }
 );
 
@@ -119,6 +119,14 @@ const userSlice = createSlice({
       .addCase(updateUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.user = action.payload; // сохраняем присланного сервером пользователя в стор
+        state.isLoading = false; // сбрасываем флаг, взведённый в pending (конвенция всех слайсов проекта)
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.error = action.error.message ?? null;
+        state.isLoading = false; // сбрасываем флаг, взведённый в pending
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;

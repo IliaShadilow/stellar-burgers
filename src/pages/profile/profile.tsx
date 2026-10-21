@@ -5,8 +5,6 @@ import { selectUser, selectUserError } from '../../services/selectors';
 import { updateUser } from '../../services/slices/user/slice';
 import { useDispatch, useSelector } from '../../services/store';
 
-import type { TRegisterData } from '@api';
-
 export const Profile = (): React.JSX.Element => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
@@ -36,13 +34,7 @@ export const Profile = (): React.JSX.Element => {
 
   const handleSubmit = (e: SyntheticEvent): void => {
     e.preventDefault();
-    const payload: Partial<TRegisterData> = {};
-    // отправляем только то, что изменилось
-    if (formValue.name !== user?.name) payload.name = formValue.name;
-    if (formValue.email !== user?.email) payload.email = formValue.email;
-    if (formValue.password) payload.password = formValue.password;
-
-    void dispatch(updateUser(payload));
+    void dispatch(updateUser(formValue));
   };
 
   const handleCancel = (e: SyntheticEvent): void => {

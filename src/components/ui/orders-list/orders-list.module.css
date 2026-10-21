@@ -1,5 +1,5 @@
 .content {
   width: 100%;
-  max-height: calc(100vh - 250px); /* даем списку высоту, чтобы он прокручивался */
+  height: 100%;
   overflow-y: scroll;
 }

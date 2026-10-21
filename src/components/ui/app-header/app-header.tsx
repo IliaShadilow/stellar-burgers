@@ -1,10 +1,10 @@
-import { NavLink } from 'react-router-dom';
 import {
   BurgerIcon,
   ListIcon,
   ProfileIcon,
   Logo,
 } from '@krgaa/react-developer-burger-ui-components';
+import { NavLink } from 'react-router-dom';
 
 import type { TAppHeaderUIProps } from './type';
 
