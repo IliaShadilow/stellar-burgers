@@ -1,34 +1,76 @@
 import { BurgerConstructorUI } from '@ui';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import type { TConstructorIngredient, TConstructorState, TOrder } from '@utils-types';
+import {
+  selectConstructorBun,
+  selectConstructorIngredients,
+  selectOrderData,
+  selectOrderLoading,
+  selectUser,
+} from '../../services/selectors';
+import { clearConstructor } from '../../services/slices/constructor/slice';
+import { createOrder, clearOrderData } from '../../services/slices/order/slice';
+import { useSelector, useDispatch } from '../../services/store';
+
+import type { TConstructorIngredient, TConstructorState } from '@utils-types';
 
 export const BurgerConstructor = (): React.JSX.Element | null => {
-  /** TODO: Взять переменные constructorItems, orderRequest и orderModalData из стора */
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const orderRequest = useSelector(selectOrderLoading);
+  const orderModalData = useSelector(selectOrderData);
+  const user = useSelector(selectUser); // проверяем, залогинен ли пользователь
+
+  // берем из стора
+  const bun = useSelector(selectConstructorBun);
+  const ingredients = useSelector(selectConstructorIngredients);
+
+  // формируем объект для UI, подставляя данные из стора
   const constructorItems: TConstructorState = {
-    bun: null,
-    ingredients: [],
+    bun,
+    ingredients,
   };
-  const orderRequest = false;
-  const orderModalData: TOrder | null = null;
+
+  useEffect(() => {
+    localStorage.setItem('burgerConstructor', JSON.stringify({ bun, ingredients }));
+  }, [bun, ingredients]);
 
   const onOrderClick = (): void => {
-    if (!constructorItems.bun || orderRequest) return;
-    // TODO: Оформить заказ
+    if (!bun || orderRequest) return;
+
+    // без авторизации кидаем на логин
+    if (!user) {
+      void navigate('/login');
+      return;
+    }
+
+    // собираем массив id(булка + начинки + булка)
+    const ingredientsIds = [bun._id, ...ingredients.map((item) => item._id), bun._id];
+
+    // отправление заказа
+    const orderPromise = dispatch(createOrder(ingredientsIds))
+      .unwrap()
+      .then(() => {
+        void dispatch(clearConstructor()); // очистка корзины после заказа
+      })
+      .catch(() => {
+        // ошибка уже обрабатывается в Redux (isLoading = false), здесь можно просто ничего не делать
+      });
+    void orderPromise;
   };
 
   const closeOrderModal = (): void => {
-    // TODO: Закрыть модальное окно и сбросить заказ
+    // закрываем модальное окно и сбросить заказ
+    void dispatch(clearOrderData());
   };
 
+  // считаем цену
   const price = useMemo(
     () =>
-      (constructorItems.bun ? constructorItems.bun.price * 2 : 0) +
-      constructorItems.ingredients.reduce(
-        (s: number, v: TConstructorIngredient) => s + v.price,
-        0
-      ),
-    [constructorItems]
+      (bun ? bun.price * 2 : 0) +
+      ingredients.reduce((s: number, v: TConstructorIngredient) => s + v.price, 0),
+    [bun, ingredients]
   );
 
   return (
