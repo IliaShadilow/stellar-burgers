@@ -41,11 +41,13 @@ test.describe('Страница конструктора бургера', () => 
     const ingredients = page.locator('section').first();
     const mainCard = ingredients.locator('li').filter({ hasText: 'Тестовая начинка' });
     await mainCard.getByRole('link').click();
-    // модалка показывает именно тот ингредиент, по которому кликнули
-    await expect(page.getByText('Детали ингредиента')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Тестовая начинка' })).toBeVisible();
-    await expect(page.getByText('Калории, ккал')).toBeVisible();
-    await expect(page.getByText('Белки, г')).toBeVisible();
+
+    // все проверки теперь в контейнере #modals
+    const modal = page.locator('#modals');
+    await expect(modal.getByText('Детали ингредиента')).toBeVisible();
+    await expect(modal.getByRole('heading', { name: 'Тестовая начинка' })).toBeVisible();
+    await expect(modal.getByText('Калории, ккал')).toBeVisible();
+    await expect(modal.getByText('Белки, г')).toBeVisible();
   });
 
   test('закрытие модального окна по клику на крестик', async ({ page }) => {
@@ -53,9 +55,11 @@ test.describe('Страница конструктора бургера', () => 
     const ingredients = page.locator('section').first();
     const mainCard = ingredients.locator('li').filter({ hasText: 'Тестовая начинка' });
     await mainCard.getByRole('link').click();
-    await expect(page.getByText('Калории, ккал')).toBeVisible();
-    await page.getByRole('button', { name: 'Закрыть' }).click();
-    await expect(page.getByText('Калории, ккал')).toBeHidden();
+
+    const modal = page.locator('#modals');
+    await expect(modal.getByText('Калории, ккал')).toBeVisible();
+    await modal.getByRole('button', { name: 'Закрыть' }).click();
+    await expect(modal.getByText('Калории, ккал')).toBeHidden();
   });
 
   test('закрытие модального окна по клику на оверлей', async ({ page }) => {
@@ -63,10 +67,14 @@ test.describe('Страница конструктора бургера', () => 
     const ingredients = page.locator('section').first();
     const mainCard = ingredients.locator('li').filter({ hasText: 'Тестовая начинка' });
     await mainCard.getByRole('link').click();
-    await expect(page.getByText('Калории, ккал')).toBeVisible();
-    // оверлей растянут на весь экран (fixed, inset: 0) — клик в угол бьёт по нему
-    await page.mouse.click(5, 5);
-    await expect(page.getByText('Калории, ккал')).toBeHidden();
+
+    const modal = page.locator('#modals');
+    await expect(modal.getByText('Калории, ккал')).toBeVisible();
+
+    // клик через устойчивый локатор оверлея, а не по абсолютным координатам
+    const overlay = page.locator('[class*="overlay"]');
+    await overlay.click({ position: { x: 5, y: 5 } });
+    await expect(modal.getByText('Калории, ккал')).toBeHidden();
   });
 
   test('создание заказа: модалка с верным номером и очистка конструктора', async ({ page }) => {
@@ -87,9 +95,10 @@ test.describe('Страница конструктора бургера', () => 
     // оформляем заказ
     await page.getByRole('button', { name: 'Оформить заказ' }).click();
 
-    // открылась модалка с номером заказа из HAR
-    await expect(page.getByText('идентификатор заказа')).toBeVisible();
-    await expect(page.getByText('12345')).toBeVisible();
+    // проверка номера заказа ограничена контейнером #modals
+    const modal = page.locator('#modals');
+    await expect(modal.getByText('идентификатор заказа')).toBeVisible();
+    await expect(modal.getByText('12345')).toBeVisible();
 
     // конструктор очистился: снова заглушки
     const constructor = page.locator('section').last();
@@ -97,7 +106,8 @@ test.describe('Страница конструктора бургера', () => 
     await expect(constructor.getByText('Выберите начинку')).toBeVisible();
 
     // закрываем модалку и проверяем, что она действительно закрылась
-    await page.getByRole('button', { name: 'Закрыть' }).click();
-    await expect(page.getByText('идентификатор заказа')).toBeHidden();
+    await modal.getByRole('button', { name: 'Закрыть' }).click();
+    await expect(modal.getByText('идентификатор заказа')).toBeHidden();
   });
 });
+

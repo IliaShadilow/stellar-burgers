@@ -5,7 +5,8 @@ import reducer, {
   moveIngredientDown,
   clearConstructor,
 } from '../constructor/slice';
-import type { TIngredient } from '@utils-types';
+
+import type { TConstructorState, TIngredient } from '@utils-types';
 
 const bun: TIngredient = {
   _id: 'bun-1',
@@ -20,12 +21,26 @@ const bun: TIngredient = {
   image_large: 'b.png',
   image_mobile: 'b.png',
 };
-const main1: TIngredient = { ...bun, _id: 'm-1', name: 'Начинка 1', type: 'main', price: 200 };
-const main2: TIngredient = { ...bun, _id: 'm-2', name: 'Начинка 2', type: 'main', price: 300 };
+
+const main1: TIngredient = {
+  ...bun,
+  _id: 'm-1',
+  name: 'Начинка 1',
+  type: 'main',
+  price: 200,
+};
+
+const main2: TIngredient = {
+  ...bun,
+  _id: 'm-2',
+  name: 'Начинка 2',
+  type: 'main',
+  price: 300,
+};
 
 // собираем состояние через сам редьюсер, потому что prepare в addIngredient
 // генерирует уникальный id через nanoid() при КАЖДОМ вызове
-const withTwoMains = () => {
+const withTwoMains = (): TConstructorState => {
   let state = reducer(undefined, addIngredient(main1));
   state = reducer(state, addIngredient(main2));
   return state;
